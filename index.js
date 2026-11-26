@@ -9,6 +9,7 @@ import readline from 'node:readline'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import http from 'node:http'
 import { execFile } from 'node:child_process'
 import { Sticker, StickerTypes } from 'wa-sticker-formatter'
 
@@ -575,6 +576,11 @@ async function start() {
     } catch (e) { console.error('Error en bienvenida:', e?.message || e) }
   })
 }
+
+// Servidor mínimo para hostings que exigen un puerto abierto (usa PORT si el hosting lo define)
+const PORT = process.env.PORT || process.env.SERVER_PORT || 8080
+http.createServer((_, res) => { res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' }); res.end(`${CONFIG.name} activo`) })
+  .listen(PORT, () => console.log(`🌐 Servidor de salud escuchando en el puerto ${PORT}`))
 
 process.on('unhandledRejection', e => console.error('Rechazo no controlado:', e?.message || e))
 start()
